@@ -1,8 +1,12 @@
 from pypdf import PdfReader, PdfWriter, PageObject, Transformation
+from pint import UnitRegistry
 
+_ureg = UnitRegistry()
 
-mm = 25.4 / 72  # 1mm in points
-cm = mm * 10  # 1cm in points
+mm = _ureg.mm
+cm = _ureg.cm
+inch = _ureg.inch
+pt = _ureg.point
 
 
 def overlay_page(
