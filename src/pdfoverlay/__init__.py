@@ -16,12 +16,15 @@ def overlay_page(
     y: float | Quantity = 0.0,
     rotation: int = 0,
     scale: float = 1.0,
-    margin: float = 0.0,
+    margin_left: float | Quantity = 0.0,
+    margin_right: float | Quantity = 0.0,
+    margin_bottom: float | Quantity = 0.0,
+    margin_top: float | Quantity = 0.0,
     expand: bool = False,
     over: bool = True,
 ) -> PageObject:
     """Overlay a page onto the base page with optional rotation, scaling, and margin.
-    X/Y coordinates are relative to the lower-left corner of pages and in points, where 1 point = 1/72 inch, or 25.4 / 72 mm.
+    X/Y coordinates are relative to the lower-left corner of pages and in points.
 
     Parameters
     ==========
@@ -38,8 +41,14 @@ def overlay_page(
         Must be a multiple of 90.
     scale : float, optional
         The scale factor to apply to the overlay page (default is 1.0).
-    margin : float, optional
-        The margin to apply around the overlay page (default is 0.0).
+    margin_left : float | Quantity, optional
+        The left margin to apply around the overlay page (default is 0.0).
+    margin_right : float | Quantity, optional
+        The right margin to apply around the overlay page (default is 0.0).
+    margin_bottom : float | Quantity, optional
+        The bottom margin to apply around the overlay page (default is 0.0).
+    margin_top : float | Quantity, optional
+        The top margin to apply around the overlay page (default is 0.0).
     expand : bool, optional
         If True, expands the base page to fit the overlay page (default is False).
     over : bool, optional
@@ -57,6 +66,14 @@ def overlay_page(
         x = x.to(pt).magnitude
     if isinstance(y, Quantity):
         y = y.to(pt).magnitude
+    if isinstance(margin_left, Quantity):
+        margin_left = margin_left.to(pt).magnitude
+    if isinstance(margin_right, Quantity):
+        margin_right = margin_right.to(pt).magnitude
+    if isinstance(margin_bottom, Quantity):
+        margin_bottom = margin_bottom.to(pt).magnitude
+    if isinstance(margin_top, Quantity):
+        margin_top = margin_top.to(pt).magnitude
     trans = (
         Transformation()
         .translate(-width / 2, -height / 2)
@@ -66,10 +83,10 @@ def overlay_page(
         .translate(x, y)
     )
     page.add_transformation(trans)
-    page.mediabox.lower_left = (-margin, -margin)
-    page.mediabox.upper_right = (height + margin, width + margin)
-    page.cropbox.lower_left = (-margin, -margin)
-    page.cropbox.upper_right = (height + margin, width + margin)
+    page.mediabox.lower_left = (-margin_left, -margin_bottom)
+    page.mediabox.upper_right = (height + margin_top, width + margin_right)
+    page.cropbox.lower_left = (-margin_left, -margin_bottom)
+    page.cropbox.upper_right = (height + margin_top, width + margin_right)
 
     base.merge_page(page, expand=expand, over=over)
     return base
@@ -85,7 +102,10 @@ def pdfoverlay(
     y: float | Quantity = 0.0,
     rotation: int = 0,
     scale: float = 1.0,
-    margin: float = 0.0,
+    margin_left: float | Quantity = 0.0,
+    margin_right: float | Quantity = 0.0,
+    margin_bottom: float | Quantity = 0.0,
+    margin_top: float | Quantity = 0.0,
     expand: bool = False,
     over: bool = True,
 ) -> None:
@@ -111,8 +131,14 @@ def pdfoverlay(
         Rotation angle in degrees for the overlay page (default is 0).
     scale : float, optional
         Scale factor for the overlay page (default is 1.0).
-    margin : float, optional
-        Margin around the overlay page (default is 0.0).
+    margin_left : float | Quantity, optional
+        The left margin to apply around the overlay page (default is 0.0).
+    margin_right : float | Quantity, optional
+        The right margin to apply around the overlay page (default is 0.0).
+    margin_bottom : float | Quantity, optional
+        The bottom margin to apply around the overlay page (default is 0.0).
+    margin_top : float | Quantity, optional
+        The top margin to apply around the overlay page (default is 0.0).
     expand : bool, optional
         If True, expands the base page to fit the overlay page (default is False).
     over : bool, optional
@@ -126,7 +152,9 @@ def pdfoverlay(
         base = base_reader.pages[in1_page]
         page = overlay_reader.pages[in2_page]
         new = overlay_page(
-            base, page, x, y, rotation, scale, margin, expand, over
+            base, page, x, y, rotation, scale,
+            margin_left, margin_right, margin_bottom, margin_top,
+            expand, over
         )
         writer.add_page(new)
         writer.write(out)
