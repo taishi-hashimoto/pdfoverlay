@@ -1,8 +1,8 @@
+"pdfoverlay"
 from pypdf import PdfReader, PdfWriter, PageObject, Transformation
-from pint import UnitRegistry
+from pint import UnitRegistry, Quantity
 
 _ureg = UnitRegistry()
-
 mm = _ureg.mm
 cm = _ureg.cm
 inch = _ureg.inch
@@ -12,8 +12,8 @@ pt = _ureg.point
 def overlay_page(
     base: PageObject,
     page: PageObject,
-    x: float = 0.0,
-    y: float = 0.0,
+    x: float | Quantity = 0.0,
+    y: float | Quantity = 0.0,
     rotation: int = 0,
     scale: float = 1.0,
     margin: float = 0.0,
@@ -29,9 +29,9 @@ def overlay_page(
         The base page onto which the overlay will be applied.
     page : PageObject
         The page to overlay on the base page.
-    x : float, optional
+    x : float | Quantity, optional
         The x-coordinate to place the overlay page (default is 0.0).
-    y : float, optional
+    y : float | Quantity, optional
         The y-coordinate to place the overlay page (default is 0.0).
     rotation : int, optional
         The rotation angle in degrees to apply to the overlay page (default is 0).
@@ -53,6 +53,10 @@ def overlay_page(
     # Rotate and scale the overlay page
     width = page.mediabox.width
     height = page.mediabox.height
+    if isinstance(x, Quantity):
+        x = x.to(pt).magnitude
+    if isinstance(y, Quantity):
+        y = y.to(pt).magnitude
     trans = (
         Transformation()
         .translate(-width / 2, -height / 2)
@@ -77,8 +81,8 @@ def pdfoverlay(
     out: str,
     in1_page: int = 0,
     in2_page: int = 0,
-    x: float = 0.0,
-    y: float = 0.0,
+    x: float | Quantity = 0.0,
+    y: float | Quantity = 0.0,
     rotation: int = 0,
     scale: float = 1.0,
     margin: float = 0.0,
@@ -99,9 +103,9 @@ def pdfoverlay(
         Page number in the base PDF to overlay onto (default is 0).
     in2_page : int, optional
         Page number in the overlay PDF to use (default is 0).
-    x : float, optional
+    x : float | Quantity, optional
         X-coordinate for the overlay position (default is 0.0).
-    y : float, optional
+    y : float | Quantity, optional
         Y-coordinate for the overlay position (default is 0.0).
     rotation : int, optional
         Rotation angle in degrees for the overlay page (default is 0).
