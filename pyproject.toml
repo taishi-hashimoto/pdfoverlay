@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pdfoverlay"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python library for overlaying PDFs with translation, rotation, and scaling."
 authors = [
     { name = "Taishi Hashimoto", email = "hashimoto.taishi@outlook.com" }
