@@ -28,7 +28,7 @@ def test_overlay_page():
     """Test that the overlay function works correctly."""
     from pypdf import PdfReader, PdfWriter
     from pdfoverlay import overlay_page, mm
-    
+
     prepare_test_files()
 
     reader = PdfReader(LEGEND_FILE)
@@ -41,7 +41,9 @@ def test_overlay_page():
     result_page = overlay_page(
         base_page, legend_page,
         x=3*mm, y=2.5*mm,
-        rotation=-90, scale=1.0, margin=0.0, expand=True, over=True)
+        rotation=-90, scale=1.0,
+        margin_left=0.0, margin_right=0.0, margin_top=0.0, margin_bottom=0.0,
+        expand=True, over=True)
 
     # Write out the result.
     output_path = HERE / "overlay_output.pdf"
@@ -65,5 +67,5 @@ def test_pdfoverlay():
         in2=str(LEGEND_FILE),
         out=str(output_path),
         x=3*mm, y=2.5*mm,
-        rotation=-90, scale=1.0, margin=0.0, expand=True, over=True
+        rotation=-90, scale=1.0, expand=True, over=True
     )
